@@ -9,6 +9,8 @@ import * as chrome from "./chrome";
 
 import { prefs } from "../utils/prefs";
 import { setupHelper } from "../utils/dbg";
+import setupErrorReporting from "../utils/error-reporting";
+const Raven = setupErrorReporting();
 
 import { isFirefoxPanel } from "devtools-config";
 import {
@@ -57,8 +59,9 @@ async function onConnect(
       client: client.clientCommands
     });
   }
-
-  bootstrapApp(connection, { store, actions });
+  Raven.context(() => {
+    bootstrapApp(connection, { store, actions });
+  });
 
   return { store, actions, selectors, client: commands };
 }
